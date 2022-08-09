@@ -1,47 +1,25 @@
 package pe.idat.mainModule.model
 
+import android.util.Log
+import kotlinx.coroutines.*
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.uiThread
 import pe.idat.ComercioApplication
 import pe.idat.common.entities.ComercioEntity
 
 //MODEL
-class MainInteractor
-{
-    /*
-    //definimos una interfaz
-    interface ComerciosCallback {
-        fun getComerciosCallback(comercios:MutableList<ComercioEntity>)
-    } */
+class MainInteractor {
 
-    /*
-    //función para el ViewModel
-    fun getComerciosCallback(callback:ComerciosCallback)
-    {
+    fun getComercios(callback: (List<ComercioEntity>) -> Unit) {
         doAsync {
-            val comercioDB=ComercioApplication.database.ComercioDao().findAllDB()
-
+            val comercioDB = ComercioApplication.database.ComercioDao().findAllDB()
             uiThread {
-                //respuesta para el ViewModel
-                callback.getComerciosCallback(comercioDB)
-            }
-        }
-    } */
-
-    fun getComercios(callback:(MutableList<ComercioEntity>) -> Unit)
-    {
-        doAsync {
-            val comercioDB=ComercioApplication.database.ComercioDao().findAllDB()
-
-            uiThread {
-                //respuesta para el ViewModel
                 callback(comercioDB)
             }
         }
     }
 
-    fun deleteComercio(comercioEntity:ComercioEntity,callback:(ComercioEntity) -> Unit)
-    {
+    fun deleteComercio(comercioEntity: ComercioEntity, callback: (ComercioEntity) -> Unit) {
         doAsync {
             ComercioApplication.database.ComercioDao().deleteDB(comercioEntity)
 
@@ -51,8 +29,7 @@ class MainInteractor
         }
     }
 
-    fun updateComercio(comercioEntity:ComercioEntity,callback:(ComercioEntity) -> Unit)
-    {
+    fun updateComercio(comercioEntity: ComercioEntity, callback: (ComercioEntity) -> Unit) {
         doAsync {
             ComercioApplication.database.ComercioDao().updateDB(comercioEntity)
 

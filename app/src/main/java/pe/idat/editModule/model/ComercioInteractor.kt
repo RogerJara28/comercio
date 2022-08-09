@@ -6,13 +6,10 @@ import pe.idat.ComercioApplication
 import pe.idat.common.entities.ComercioEntity
 
 //MODEL
-class ComercioInteractor
-{
-    fun saveComercio(comercioEntity: ComercioEntity, callback:(Long) -> Unit)
-    {
+class ComercioInteractor {
+    fun saveComercio(comercioEntity: ComercioEntity, callback: (Long) -> Unit) {
         doAsync {
-            val newID=ComercioApplication.database.ComercioDao().insertDB(comercioEntity)
-            //code...??
+            val newID = ComercioApplication.database.ComercioDao().insertDB(comercioEntity)
 
             uiThread {
                 callback(newID)
@@ -20,8 +17,7 @@ class ComercioInteractor
         }
     }
 
-    fun updateComercio(comercioEntity:ComercioEntity,callback:(ComercioEntity) -> Unit)
-    {
+    fun updateComercio(comercioEntity: ComercioEntity, callback: (ComercioEntity) -> Unit) {
         doAsync {
             ComercioApplication.database.ComercioDao().updateDB(comercioEntity)
 
