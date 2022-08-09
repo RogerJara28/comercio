@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Comercios</string>
+    <string name="description_img_photo">imagen del comercio</string>
+    <string name="description_comercio_add">Crear comercio</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="hint_name">nombre del comercio</string>
+    <string name="helper_required">Requerido</string>
+    <string name="hint_phone">telefono del comercio</string>
+    <string name="hint_website">url del sitio web</string>
+    <string name="hint_photo_url">url de la imagen</string>
+    <string name="comercio_title_add">Crear comercio</string>
+    <string name="menu_save">Save</string>
+    <string name="comercio_save">¡Comercio registrado exitosamente!</string>
+    <string name="comercio_update">Comercio actualizado exitosamente.</string>
+    <string name="title_edit">Editar comercio</string>
+    <string name="error_no_resolve">App no compatible</string>
+</resources>

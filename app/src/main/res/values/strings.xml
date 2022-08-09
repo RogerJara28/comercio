@@ -1,0 +1,18 @@
+<resources>
+    <string name="app_name">Shops</string>
+    <string name="description_img_photo">business image</string>
+    <string name="description_comercio_add">create trade</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="hint_name">trade name</string>
+    <string name="helper_required">Required</string>
+    <string name="hint_phone">business phone</string>
+    <string name="hint_website">website url</string>
+    <string name="hint_photo_url">image url</string>
+    <string name="comercio_title_add">create trade</string>
+    <string name="menu_save">Save</string>
+    <string name="comercio_save">Trade Registered Successfully!</string>
+    <string name="comercio_update">Commerce upgraded successfully.</string>
+    <string name="title_edit">edit trade</string>
+    <string name="error_no_resolve">App not supported</string>
+</resources>
