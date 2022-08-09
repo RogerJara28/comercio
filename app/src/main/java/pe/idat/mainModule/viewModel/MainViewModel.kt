@@ -3,92 +3,57 @@ package pe.idat.mainModule.viewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import org.jetbrains.anko.doAsync
-import org.jetbrains.anko.uiThread
-import pe.idat.ComercioApplication
 import pe.idat.common.entities.ComercioEntity
 import pe.idat.mainModule.model.MainInteractor
 
 //VIEWMODEL
-class MainViewModel: ViewModel()
-{
-    //reflejar datos de la vista
-    //private var comercios:MutableLiveData<List<ComercioEntity>>
+class MainViewModel : ViewModel() {
 
     //reflejar datos del model
-    private var interactor:MainInteractor
+    private val interactor: MainInteractor = MainInteractor()
 
-    private var comercioList:MutableList<ComercioEntity>
+    // creo que esta guarda la lista interna de objetos, para luego solo
+    // manipular esta variable e ir actualizando valores basados en esta.
+    // quiero eliminarla pero la dejo por acá por ahora
+    private var comercioList: MutableList<ComercioEntity> = mutableListOf()
+
+    private val _comercios = MutableLiveData<List<ComercioEntity>>()
+    val comercios: LiveData<List<ComercioEntity>>
+        get() = _comercios
 
     init {
-        interactor=MainInteractor()
-        comercioList=mutableListOf()
-
-        //comercios=MutableLiveData()
-        //loadComercios()
+        loadComercios()
     }
 
-    //inicialización por lazy
-    private val comercios:MutableLiveData<List<ComercioEntity>> by lazy {
-        MutableLiveData<List<ComercioEntity>>().also {
-            loadComercios()
-        }
-    }
-
-    //encapsulando
-    fun getComercios():LiveData<List<ComercioEntity>> {
-        return comercios
-    }
-
-    private fun loadComercios()
-    {
-        /*
-        doAsync {
-            val comercioDB=ComercioApplication.database.ComercioDao().findAllDB()
-
-            uiThread {
-                comercios.value=comercioDB
-            }
-        } */
-
-        /*
-        interactor.getComerciosCallback(object:MainInteractor.ComerciosCallback {
-            override fun getComerciosCallback(comercios: MutableList<ComercioEntity>) {
-                this@MainViewModel.comercios.value=comercios
-            }
-        }) */
-
+    // this is the one that loads it up
+    fun loadComercios() {
         interactor.getComercios {
-            comercios.value=it
-            comercioList=it
+            comercioList = it.toMutableList()
+            _comercios.value = it
         }
     }
 
-    fun deleteComercio(comercioEntity:ComercioEntity)
-    {
-        interactor.deleteComercio(comercioEntity, {
-            val index=comercioList.indexOf(comercioEntity)
+    fun deleteComercio(comercioEntity: ComercioEntity) {
+        interactor.deleteComercio(comercioEntity) {
+            val index = comercioList.indexOf(comercioEntity)
 
-            if(index!=-1)
-            {
+            if (index != -1) {
                 comercioList.removeAt(index)
-                comercios.value=comercioList
+                _comercios.value = comercioList
             }
-        })
+        }
     }
 
-    fun updateComercio(comercioEntity:ComercioEntity)
-    {
-        comercioEntity.isFavorite=!comercioEntity.isFavorite
+    fun updateComercio(comercioEntity: ComercioEntity) {
+        comercioEntity.isFavorite = !comercioEntity.isFavorite
 
-        interactor.updateComercio(comercioEntity, {
-            val index=comercioList.indexOf(comercioEntity)
+        interactor.updateComercio(comercioEntity) {
+            val index = comercioList.indexOf(comercioEntity)
 
-            if(index!=-1)
-            {
-                comercioList.set(index,comercioEntity)
-                comercios.value=comercioList
+            if (index != -1) {
+                comercioList.set(index, comercioEntity)
+                _comercios.value = comercioList
             }
-        })
+        }
     }
 }

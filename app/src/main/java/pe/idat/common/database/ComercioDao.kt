@@ -4,8 +4,7 @@ import androidx.room.*
 import pe.idat.common.entities.ComercioEntity
 
 @Dao
-interface ComercioDao
-{
+interface ComercioDao {
     @Insert
     fun insertDB(comercioEntity: ComercioEntity): Long
 
@@ -16,8 +15,8 @@ interface ComercioDao
     fun deleteDB(comercioEntity: ComercioEntity)
 
     @Query("SELECT * FROM ComercioTable WHERE comercioId IN (:comercioId)")
-    fun findByIdDB(comercioId:Int): ComercioEntity
+    fun findByIdDB(comercioId: Int): ComercioEntity
 
     @Query("SELECT * FROM ComercioTable")
-    fun findAllDB(): MutableList<ComercioEntity>
+    fun findAllDB(): List<ComercioEntity>
 }

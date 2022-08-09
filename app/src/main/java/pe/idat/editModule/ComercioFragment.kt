@@ -22,97 +22,41 @@ import pe.idat.R
 import pe.idat.common.entities.ComercioEntity
 import pe.idat.databinding.FragmentComercioBinding
 import pe.idat.editModule.viewModel.ComercioViewModel
+import pe.idat.mainModule.viewModel.MainViewModel
 
 //Escenario para el diseño de la vista Registrar y Editar
-class ComercioFragment : Fragment()
-{
-    private lateinit var mBinding:FragmentComercioBinding
-    private var mActivity: MainActivity?=null
+class ComercioFragment : Fragment() {
+    private lateinit var mBinding: FragmentComercioBinding
+    private var mActivity: MainActivity? = null
 
-    private var mIsEditMode:Boolean=false
-    private lateinit var mComercioEntity:ComercioEntity
+    private var mIsEditMode: Boolean = false
+    private lateinit var mComercioEntity: ComercioEntity
 
     //MVVM
-    private lateinit var mComercioViewModel:ComercioViewModel
+    private lateinit var mComercioViewModel: ComercioViewModel
+    private lateinit var mMainViewModel: MainViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         //inicializando
-        mComercioViewModel=ViewModelProvider(requireActivity()).get(ComercioViewModel::class.java)
+        mComercioViewModel = ViewModelProvider(requireActivity())[ComercioViewModel::class.java]
+        mMainViewModel = ViewModelProvider(requireActivity())[MainViewModel::class.java]
     }
 
-    override fun onCreateView(inflater: LayoutInflater,
-                              container: ViewGroup?,
-                              savedInstanceState: Bundle?): View?
-    {
-        mBinding=FragmentComercioBinding.inflate(inflater,container, false)
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        mBinding = FragmentComercioBinding.inflate(inflater, container, false)
         return mBinding.root
     }
 
     //representa ciclo de vida del fragmento
     @SuppressLint("UseRequireInsteadOfGet")
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?)
-    {
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        //val comercioId=arguments?.getLong("keyId",0)
-
-        /*
-        if(comercioId!=null && comercioId!=0L)
-        {
-            //Modo editar
-            mIsEditMode=true
-
-            doAsync {
-                mComercioEntity= ComercioApplication.database.ComercioDao().findByIdDB(comercioId.toInt())
-
-                uiThread {
-                    with(mBinding)
-                    {
-                        /*
-                        ietName.setText(mComercioEntity?.name)
-                        ietPhone.setText(mComercioEntity?.phone)
-                        ietWebsite.setText(mComercioEntity?.website)
-                        ietPhotoUrl.setText(mComercioEntity?.photoUrl)
-                        */
-
-                        //buenas practicas
-                        ietName.text=mComercioEntity?.name?.editable()
-                        ietPhone.text=mComercioEntity?.phone?.editable()
-                        ietWebsite.text=mComercioEntity?.website?.editable()
-                        ietPhotoUrl.text=mComercioEntity?.photoUrl?.editable()
-
-                        /* //no es necesario ya que se tenia en ComercioAdapter/onViewCreated
-                        Glide.with(activity!!)
-                            .load(mComercioEntity?.photoUrl)
-                            .diskCacheStrategy(DiskCacheStrategy.ALL)
-                            .centerCrop()
-                            .into(imgComercio)
-                        */
-                    }
-                }
-            }
-
-            //Toast.makeText(activity,comercioId.toString(),Toast.LENGTH_SHORT).show()
-        }
-        else
-        {
-            //Modo registrar
-            mIsEditMode=false
-
-            //inicializar
-            mComercioEntity= ComercioEntity(name="",phone="",photoUrl="")
-
-            //Toast.makeText(activity,comercioId.toString(),Toast.LENGTH_SHORT).show()
-        }
-        */
-
-        //configuración para insertar imagenes
-        /*mBinding.ietPhotoUrl.addTextChangedListener {
-            Glide.with(this).load(mBinding.ietPhotoUrl.text.toString())
-                .diskCacheStrategy(DiskCacheStrategy.ALL).centerCrop().into(mBinding.imgComercio)
-        }*/
 
         //llamar
         setupViewModel()
@@ -133,32 +77,27 @@ class ComercioFragment : Fragment()
             //validateOther(mBinding.tilPhotoUrl)
 
             //codigo pora mostrar imagen gris si no hay contenido
-            if(validateOther(mBinding.tilPhotoUrl))
-            {
+            if (validateOther(mBinding.tilPhotoUrl)) {
                 Glide.with(this)
                     .load(mBinding.ietPhotoUrl.text.toString())
                     .diskCacheStrategy(
                         DiskCacheStrategy.ALL
                     ).centerCrop().into(mBinding.imgComercio)
-            }
-            else {
+            } else {
                 mBinding.imgComercio.setImageResource(R.drawable.ic_image)
             }
         }
     }
 
     //llamar al menu al momento de empezar la actividad
-    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater)
-    {
-        inflater.inflate(R.menu.menu_save,menu)
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        inflater.inflate(R.menu.menu_save, menu)
         super.onCreateOptionsMenu(menu, inflater)
     }
 
     //ejecutar eventos dentro del menu
-    override fun onOptionsItemSelected(item: MenuItem): Boolean
-    {
-        return when(item.itemId)
-        {
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
             android.R.id.home -> {
                 //code de la flecha de retroceso
                 mActivity?.onBackPressed()
@@ -168,22 +107,26 @@ class ComercioFragment : Fragment()
             R.id.action_save -> {
 
                 //si no hay nada de que validar
-                if(validateOther(mBinding.tilPhotoUrl,mBinding.tilWebsite,mBinding.tilPhone,mBinding.tilName))
-                {
+                if (validateOther(
+                        mBinding.tilPhotoUrl,
+                        mBinding.tilWebsite,
+                        mBinding.tilPhone,
+                        mBinding.tilName
+                    )
+                ) {
                     //code de guardar
-                    val comercio= ComercioEntity(name=mBinding.ietName.text.toString().trim(),
-                        phone=mBinding.ietPhone.text.toString().trim(),
-                        website=mBinding.ietWebsite.text.toString().trim(),
-                        photoUrl=mBinding.ietPhotoUrl.text.toString().trim())
+                    val comercio = ComercioEntity(
+                        name = mBinding.ietName.text.toString().trim(),
+                        phone = mBinding.ietPhone.text.toString().trim(),
+                        website = mBinding.ietWebsite.text.toString().trim(),
+                        photoUrl = mBinding.ietPhotoUrl.text.toString().trim()
+                    )
 
-                    if(mIsEditMode)
-                    {
+                    if (mIsEditMode) {
                         //editar
-                        comercio.comercioId=mComercioEntity.comercioId
+                        comercio.comercioId = mComercioEntity.comercioId
                         mComercioViewModel.updateComercio(comercio)
-                    }
-                    else
-                    {
+                    } else {
                         //registrar
                         mComercioViewModel.saveComercio(comercio)
                     }
@@ -204,10 +147,9 @@ class ComercioFragment : Fragment()
     }
 
     //cerrar correctamente el fragmento
-    override fun onDestroy()
-    {
+    override fun onDestroy() {
         mActivity?.supportActionBar?.setDisplayHomeAsUpEnabled(false)
-        mActivity?.supportActionBar?.title=getString(R.string.app_name)
+        mActivity?.supportActionBar?.title = getString(R.string.app_name)
 
         //mActivity?.mBinding?.fabAddComercio?.show()
         mComercioViewModel.setShowFab(true)
@@ -221,13 +163,11 @@ class ComercioFragment : Fragment()
 
     //método para ocultar teclado
     @SuppressLint("UseRequireInsteadOfGet")
-    private fun hideKeyboard()
-    {
-        val imm=mActivity?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+    private fun hideKeyboard() {
+        val imm = mActivity?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
 
-        if(view!=null)
-        {
-            imm.hideSoftInputFromWindow(view!!.windowToken,0)
+        if (view != null) {
+            imm.hideSoftInputFromWindow(view!!.windowToken, 0)
         }
     }
 
@@ -237,51 +177,42 @@ class ComercioFragment : Fragment()
     }
 
     //validar formulario
-    private fun validate(): Boolean
-    {
-        var isValid=true
+    private fun validate(): Boolean {
+        var isValid = true
 
         with(mBinding)
         {
-            if(ietPhotoUrl.text.toString().trim().isEmpty())
-            {
-                mBinding.tilPhotoUrl.error=getString(R.string.helper_required)
+            if (ietPhotoUrl.text.toString().trim().isEmpty()) {
+                mBinding.tilPhotoUrl.error = getString(R.string.helper_required)
                 mBinding.ietPhotoUrl.requestFocus()
-                isValid=false
-            }
-            else {
-                mBinding.tilPhotoUrl.error=null
+                isValid = false
+            } else {
+                mBinding.tilPhotoUrl.error = null
             }
 
-            if(ietWebsite.text.toString().trim().isEmpty())
-            {
-                mBinding.tilWebsite.error=getString(R.string.helper_required)
+            if (ietWebsite.text.toString().trim().isEmpty()) {
+                mBinding.tilWebsite.error = getString(R.string.helper_required)
                 mBinding.ietWebsite.requestFocus()
-                isValid=false
-            }
-            else {
-                mBinding.tilWebsite.error=null
+                isValid = false
+            } else {
+                mBinding.tilWebsite.error = null
             }
 
-            if(ietPhone.text.toString().trim().isEmpty())
-            {
-                mBinding.tilPhone.error=getString(R.string.helper_required)
+            if (ietPhone.text.toString().trim().isEmpty()) {
+                mBinding.tilPhone.error = getString(R.string.helper_required)
                 mBinding.ietPhone.requestFocus()
-                isValid=false
-            }
-            else {
-                mBinding.tilPhone.error=null
+                isValid = false
+            } else {
+                mBinding.tilPhone.error = null
             }
 
-            if(ietName.text.toString().trim().isEmpty())
-            {
-                mBinding.tilName.error=getString(R.string.helper_required)
+            if (ietName.text.toString().trim().isEmpty()) {
+                mBinding.tilName.error = getString(R.string.helper_required)
                 mBinding.ietName.requestFocus()
-                isValid=false
-            }
-            else {
+                isValid = false
+            } else {
                 //quitar border rojo
-                mBinding.tilName.error=null
+                mBinding.tilName.error = null
             }
         }
 
@@ -289,88 +220,81 @@ class ComercioFragment : Fragment()
     }
 
     //validar formulario
-    private fun validateOther(vararg txtArray:TextInputLayout): Boolean
-    {
-        var isValid=true
+    private fun validateOther(vararg txtArray: TextInputLayout): Boolean {
+        var isValid = true
 
-        for(txt in txtArray)
-        {
-            if(txt.editText?.text.toString().trim().isEmpty())
-            {
-                txt.error=getString(R.string.helper_required)
+        for (txt in txtArray) {
+            if (txt.editText?.text.toString().trim().isEmpty()) {
+                txt.error = getString(R.string.helper_required)
                 txt.editText?.requestFocus()
-                isValid=false
-            }
-            else {
-                txt.error=null
+                isValid = false
+            } else {
+                txt.error = null
             }
         }
 
         return isValid
     }
 
-    private fun setupViewModel()
-    {
-        mComercioViewModel.getComercioSelected().observe(viewLifecycleOwner,{
-            mComercioEntity=it
+    private fun setupViewModel() {
+        mComercioViewModel.getComercioSelected().observe(viewLifecycleOwner) {
+            mComercioEntity = it
 
-            if(it.comercioId!=0L) {
-                mIsEditMode=true //modo editar
+            if (it.comercioId != 0L) {
+                mIsEditMode = true //modo editar
 
                 with(mBinding)
                 {
-                    ietName.text=it?.name?.editable()
-                    ietPhone.text=it?.phone?.editable()
-                    ietWebsite.text=it?.website?.editable()
-                    ietPhotoUrl.text=it?.photoUrl?.editable()
+                    ietName.text = it?.name?.editable()
+                    ietPhone.text = it?.phone?.editable()
+                    ietWebsite.text = it?.website?.editable()
+                    ietPhotoUrl.text = it?.photoUrl?.editable()
                 }
-            }
-            else {
-                mIsEditMode=false //modo registrar
+            } else {
+                mIsEditMode = false //modo registrar
             }
 
-            mActivity=activity as? MainActivity
+            mActivity = activity as? MainActivity
 
             //mostrar flecha de retroceso
             mActivity?.supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
             //mostrar título
-            mActivity?.supportActionBar?.title=getString(R.string.comercio_title_add)
+            mActivity?.supportActionBar?.title = getString(R.string.comercio_title_add)
 
             //acceso al menu
             setHasOptionsMenu(true)
 
             //titulo según la acción
-            mActivity?.supportActionBar?.title=
-                if(mIsEditMode) {
+            mActivity?.supportActionBar?.title =
+                if (mIsEditMode) {
                     getString(R.string.title_edit)
-                }
-                else {
+                } else {
                     getString(R.string.comercio_title_add)
                 }
-        })
+        }
 
-        mComercioViewModel.getResult().observe(viewLifecycleOwner,{result->
+        mComercioViewModel.getResult().observe(viewLifecycleOwner) { result ->
             hideKeyboard()
-
-            when(result)
-            {
+            when (result) {
                 //registrar
                 is Long -> {
-                    mComercioEntity.comercioId=result
+                    mComercioEntity.comercioId = result
                     mComercioViewModel.setComercioSelected(mComercioEntity)
-
-                    Toast.makeText(mActivity,R.string.comercio_save,Toast.LENGTH_LONG).show()
+                    mMainViewModel.loadComercios()
+                    Toast.makeText(mActivity, R.string.comercio_save, Toast.LENGTH_LONG).show()
                     mActivity?.onBackPressed()
                 }
 
                 //actualizar
                 is ComercioEntity -> {
                     mComercioViewModel.setComercioSelected(mComercioEntity)
-                    Toast.makeText(mActivity,R.string.comercio_update,Toast.LENGTH_LONG).show()
+                    mMainViewModel.loadComercios()
+                    Toast.makeText(mActivity, R.string.comercio_update, Toast.LENGTH_LONG).show()
+                    mActivity?.onBackPressed()
                 }
             }
-        })
+        }
     }
 }
 
